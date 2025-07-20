@@ -46,7 +46,7 @@ export default function Page() {
       blurRadius: 0,
       color: "#000000",
     },
-    previewImage: "/placeholder.svg?height=400&width=600",
+    previewImage: "/placeholder.jpg",
   })
 
   // Backdrop Filters State
@@ -80,13 +80,13 @@ export default function Page() {
       { name: "Saturate", property: "saturate", min: 0, max: 200, default: 100, unit: "%", enabled: false, value: 100 },
       { name: "Sepia", property: "sepia", min: 0, max: 100, default: 0, unit: "%", enabled: false, value: 0 },
     ],
-    backgroundImage: "/placeholder.svg?height=600&width=800",
+    backgroundImage: "/placeholder.jpg?height=600&width=800",
   })
 
   // Box Shadow State
   const [boxShadowState, setBoxShadowState] = useState<BoxShadowState>({
     shadows: [],
-    previewImage: "/placeholder.svg?height=400&width=600",
+    previewImage: "/placeholder.jpg",
   })
 
   return (

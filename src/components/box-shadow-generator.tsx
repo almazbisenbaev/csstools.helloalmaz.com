@@ -288,7 +288,7 @@ export default function BoxShadowGenerator({ state, onStateChange }: BoxShadowGe
                     style={{ boxShadow: generateBoxShadowString() }}
                   >
                     <img
-                      src={state.previewImage || "/placeholder.svg"}
+                      src={state.previewImage || "/placeholder.jpg"}
                       alt="Box shadow preview"
                       className="w-full object-cover rounded"
                       crossOrigin="anonymous"

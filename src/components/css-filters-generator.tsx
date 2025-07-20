@@ -257,7 +257,7 @@ export default function CSSFiltersGenerator({ state, onStateChange }: CSSFilters
                 {/* Preview Image */}
                 <div className="relative overflow-hidden rounded-lg border bg-checkered">
                   <img
-                    src={state.previewImage || "/placeholder.svg"}
+                    src={state.previewImage || "/placeholder.jpg"}
                     alt="Filter preview"
                     className="w-full object-cover transition-all duration-200"
                     style={{ filter: generateFilterString() }}
