@@ -92,6 +92,7 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-8">
+
         <div className="text-center space-y-4 mb-8">
           <h1 className="text-4xl font-bold">CSS Playfround</h1>
           <p className="text-muted-foreground text-lg">Generate CSS filters, backdrop filters, and box shadows with real-time preview</p>
@@ -116,6 +117,9 @@ export default function Page() {
             <BoxShadowGenerator state={boxShadowState} onStateChange={setBoxShadowState} />
           </TabsContent>
         </Tabs>
+
+        <div className="px-2 text-center text-sm pt-5 pb-5 mt-10 text-gray-500 border-t">Author: <a className="text-black hover:underline" href="//helloalmaz.com" target="_blank">Almaz Bissenbayev</a></div>
+
       </div>
     </div>
   )
