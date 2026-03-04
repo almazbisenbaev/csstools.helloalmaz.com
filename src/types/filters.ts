@@ -43,3 +43,20 @@ export interface BoxShadowState {
   shadows: BoxShadowConfig[]
   previewImage: string
 }
+
+export interface GlassState {
+  backgroundColor: string
+  opacity: number
+  blur: number
+  saturation: number
+  borderRadius: number
+  borderWidth: number
+  borderColor: string
+  shadowEnabled: boolean
+  shadowX: number
+  shadowY: number
+  shadowBlur: number
+  shadowSpread: number
+  shadowColor: string
+  previewBackground: string
+}

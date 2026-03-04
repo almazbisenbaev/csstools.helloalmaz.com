@@ -13,6 +13,12 @@
        changeFrequency: "monthly",
        priority: 1,
      },
+    {
+      url: `${base}/glass`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
      {
        url: `${base}/filters`,
        lastModified,

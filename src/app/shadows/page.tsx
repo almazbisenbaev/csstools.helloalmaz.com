@@ -6,7 +6,8 @@
  import CSSFiltersGenerator from "@/components/css-filters-generator"
  import BackdropFiltersGenerator from "@/components/backdrop-filters-generator"
  import BoxShadowGenerator from "@/components/box-shadow-generator"
- import type { FiltersState, BackdropFiltersState, BoxShadowState } from "@/types/filters"
+ import GlassmorphismGenerator from "@/components/glassmorphism-generator"
+ import type { FiltersState, BackdropFiltersState, BoxShadowState, GlassState } from "@/types/filters"
  
  export default function Page() {
    const router = useRouter()
@@ -92,6 +93,23 @@
      previewImage: "/placeholder.jpg",
    })
  
+   const [glassState, setGlassState] = useState<GlassState>({
+     backgroundColor: "#ffffff",
+     opacity: 30,
+     blur: 12,
+     saturation: 150,
+     borderRadius: 16,
+     borderWidth: 1,
+     borderColor: "rgba(255,255,255,0.3)",
+     shadowEnabled: true,
+     shadowX: 0,
+     shadowY: 8,
+     shadowBlur: 32,
+     shadowSpread: 0,
+     shadowColor: "rgba(31, 38, 135, 0.2)",
+     previewBackground: "/placeholder.jpg?height=600&width=800",
+   })
+ 
    return (
      <div className="min-h-screen bg-background">
        <div className="container mx-auto py-8">
@@ -107,14 +125,16 @@
            onValueChange={(v) => {
              if (v === "filters") router.push("/filters")
              else if (v === "backdrop") router.push("/backdrop")
-             else router.push("/shadows")
+             else if (v === "shadows") router.push("/shadows")
+             else router.push("/glass")
            }}
            className="w-full"
          >
-           <TabsList className="grid w-full max-w-lg mx-auto grid-cols-3 mb-8">
+           <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-4 mb-8">
              <TabsTrigger value="filters">CSS Filters</TabsTrigger>
              <TabsTrigger value="backdrop">Backdrop Filters</TabsTrigger>
              <TabsTrigger value="shadows">Box Shadows</TabsTrigger>
+             <TabsTrigger value="glass">Glassmorphism</TabsTrigger>
            </TabsList>
  
            <TabsContent value="filters">
@@ -127,6 +147,10 @@
  
            <TabsContent value="shadows">
              <BoxShadowGenerator state={boxShadowState} onStateChange={setBoxShadowState} />
+           </TabsContent>
+ 
+           <TabsContent value="glass">
+             <GlassmorphismGenerator state={glassState} onStateChange={setGlassState} />
            </TabsContent>
          </Tabs>
  
