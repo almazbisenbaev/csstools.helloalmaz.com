@@ -8,6 +8,8 @@
  import BoxShadowGenerator from "@/components/box-shadow-generator"
  import GlassmorphismGenerator from "@/components/glassmorphism-generator"
  import type { FiltersState, BackdropFiltersState, BoxShadowState, GlassState } from "@/types/filters"
+ import TransformGenerator from "@/components/transform-generator"
+ import type { TransformState } from "@/types/filters"
  
  export default function Page() {
    const router = useRouter()
@@ -65,6 +67,27 @@
      previewBackground: "/placeholder.jpg?height=600&width=800",
    })
  
+   const [transformState, setTransformState] = useState<TransformState>({
+     rotate: 0,
+     rotateX: 0,
+     rotateY: 0,
+     rotateZ: 0,
+     translateX: 0,
+     translateY: 0,
+     translateZ: 0,
+     scale: 1,
+     scaleX: 1,
+     scaleY: 1,
+     scaleZ: 1,
+     skewX: 0,
+     skewY: 0,
+     perspective: 0,
+     originX: 50,
+     originY: 50,
+     preserve3d: false,
+     previewBackground: "/placeholder.jpg?height=600&width=800",
+   })
+ 
    return (
      <div className="min-h-screen bg-background">
        <div className="container mx-auto py-8">
@@ -81,15 +104,17 @@
              if (v === "filters") router.push("/filters")
              else if (v === "backdrop") router.push("/backdrop")
              else if (v === "shadows") router.push("/shadows")
-             else router.push("/glass")
+             else if (v === "glass") router.push("/glass")
+             else router.push("/transform")
            }}
            className="w-full"
          >
-           <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-4 mb-8">
+           <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-5 mb-8">
              <TabsTrigger value="filters">CSS Filters</TabsTrigger>
              <TabsTrigger value="backdrop">Backdrop Filters</TabsTrigger>
              <TabsTrigger value="shadows">Box Shadows</TabsTrigger>
              <TabsTrigger value="glass">Glassmorphism</TabsTrigger>
+             <TabsTrigger value="transform">Transform</TabsTrigger>
            </TabsList>
  
            <TabsContent value="filters">
@@ -106,6 +131,10 @@
  
            <TabsContent value="glass">
              <GlassmorphismGenerator state={glassState} onStateChange={setGlassState} />
+           </TabsContent>
+ 
+           <TabsContent value="transform">
+             <TransformGenerator state={transformState} onStateChange={setTransformState} />
            </TabsContent>
          </Tabs>
  

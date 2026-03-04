@@ -19,6 +19,12 @@
       changeFrequency: "monthly",
       priority: 0.9,
     },
+    {
+      url: `${base}/transform`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
      {
        url: `${base}/filters`,
        lastModified,

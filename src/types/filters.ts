@@ -60,3 +60,24 @@ export interface GlassState {
   shadowColor: string
   previewBackground: string
 }
+
+export interface TransformState {
+  rotate: number
+  rotateX: number
+  rotateY: number
+  rotateZ: number
+  translateX: number
+  translateY: number
+  translateZ: number
+  scale: number
+  scaleX: number
+  scaleY: number
+  scaleZ: number
+  skewX: number
+  skewY: number
+  perspective: number
+  originX: number
+  originY: number
+  preserve3d: boolean
+  previewBackground: string
+}
