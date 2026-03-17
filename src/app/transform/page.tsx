@@ -114,6 +114,7 @@
              <TabsTrigger value="transform">Transform</TabsTrigger>
            </TabsList>
  
+ 
            <TabsContent value="filters">
              <CSSFiltersGenerator state={filtersState} onStateChange={setFiltersState} />
            </TabsContent>
