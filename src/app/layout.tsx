@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+// import "./globals.css";
 
 import { Analytics } from "@vercel/analytics/next"
 
@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "CSS filters playground by Almaz Bissenbayev",
   description: "Generate CSS filters, backdrop filters, and box shadows with real-time preview",
+  verification: {
+    google: "8gEvDBelGstZL2v-HkrUwXEApzSAUgMl41WgXdaslSo",
+  },
 };
 
 export default function RootLayout({
