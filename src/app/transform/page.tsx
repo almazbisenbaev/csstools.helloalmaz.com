@@ -91,28 +91,30 @@
      <div className="min-h-screen bg-background">
        <div className="container mx-auto py-8">
          <div className="text-center space-y-4 mb-8">
-           <h1 className="text-4xl font-bold">CSS Playfround</h1>
+          <h1 className="text-4xl font-bold">CSS Playground</h1>
           <p className="text-muted-foreground text-lg">Generate CSS filters, backdrop filters, box shadows, matte glass, and transforms</p>
-         </div>
- 
-         <Tabs
-           value="transform"
-           onValueChange={(v) => {
-             if (v === "filters") router.push("/filters")
-             else if (v === "backdrop") router.push("/backdrop")
-             else if (v === "shadows") router.push("/shadows")
-             else if (v === "glass") router.push("/glass")
-             else router.push("/transform")
-           }}
-           className="w-full"
-         >
-           <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-5 mb-8">
-             <TabsTrigger value="filters">CSS Filters</TabsTrigger>
-             <TabsTrigger value="backdrop">Backdrop Filters</TabsTrigger>
-             <TabsTrigger value="shadows">Box Shadows</TabsTrigger>
+        </div>
+
+        <Tabs
+          value="transform"
+          onValueChange={(v) => {
+            if (v === "filters") router.push("/filters")
+            else if (v === "backdrop") router.push("/backdrop")
+            else if (v === "shadows") router.push("/shadows")
+            else if (v === "glass") router.push("/glass")
+            else if (v === "liquid-glass") router.push("/liquid-glass")
+            else router.push("/transform")
+          }}
+          className="w-full"
+        >
+          <TabsList className="grid w-full max-w-4xl mx-auto grid-cols-3 md:grid-cols-6 mb-8">
+            <TabsTrigger value="filters">Filters</TabsTrigger>
+            <TabsTrigger value="backdrop">Backdrop</TabsTrigger>
+            <TabsTrigger value="shadows">Shadows</TabsTrigger>
             <TabsTrigger value="glass">Matte glass</TabsTrigger>
-             <TabsTrigger value="transform">Transform</TabsTrigger>
-           </TabsList>
+            <TabsTrigger value="liquid-glass">Liquid Glass</TabsTrigger>
+            <TabsTrigger value="transform">Transform</TabsTrigger>
+          </TabsList>
  
  
            <TabsContent value="filters">

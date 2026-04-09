@@ -81,3 +81,35 @@ export interface TransformState {
   preserve3d: boolean
   previewBackground: string
 }
+
+export interface LiquidGlassState {
+  // SVG Filter - Turbulence
+  baseFrequencyX: number
+  baseFrequencyY: number
+  numOctaves: number
+  seed: number
+
+  // SVG Filter - Gaussian Blur
+  blurStdDeviation: number
+
+  // SVG Filter - Specular Lighting
+  surfaceScale: number
+  specularConstant: number
+  specularExponent: number
+  lightingColor: string
+  lightX: number
+  lightY: number
+  lightZ: number
+
+  // SVG Filter - Displacement Map
+  displacementScale: number
+
+  // CSS Styles
+  backdropBlur: number
+  tintColor: string
+  tintOpacity: number
+  borderRadius: number
+
+  // Preview
+  previewBackground: string
+}
