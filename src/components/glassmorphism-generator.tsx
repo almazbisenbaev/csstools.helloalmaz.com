@@ -36,7 +36,6 @@
  export default function GlassmorphismGenerator({ state, onStateChange }: GlassProps) {
    const { toast } = useToast()
    const cssRef = useRef<HTMLTextAreaElement>(null)
-   const htmlRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
  
    const rgbaBg = useMemo(() => {
@@ -61,8 +60,6 @@
      ]
      return `.glass{\n  ${rules.join("\n  ")}\n}`
    }, [rgbaBg, state.blur, state.saturation, state.borderRadius, state.borderWidth, state.borderColor, boxShadow])
- 
-   const htmlCode = `<div class="glass">Your content</div>`
  
    const copy = async (text: string, label: string) => {
      try {
@@ -304,19 +301,6 @@
                </CardHeader>
                <CardContent>
                  <Textarea ref={cssRef} value={cssCode} readOnly rows={10} />
-               </CardContent>
-             </Card>
- 
-             <Card>
-               <CardHeader className="flex flex-row items-center justify-between">
-                 <CardTitle>HTML</CardTitle>
-                 <Button size="sm" onClick={() => copy(htmlCode, "HTML")}>
-                   <Copy className="w-4 h-4" />
-                   Copy
-                 </Button>
-               </CardHeader>
-               <CardContent>
-                 <Textarea ref={htmlRef} value={htmlCode} readOnly rows={10} />
                </CardContent>
              </Card>
            </div>

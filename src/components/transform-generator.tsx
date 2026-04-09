@@ -1,7 +1,7 @@
  "use client"
  
  import { useMemo, useRef } from "react"
- import { Copy, RotateCcw, Upload } from "lucide-react"
+import { Copy, RotateCcw } from "lucide-react"
  import { Button } from "@/components/ui/button"
  import { Checkbox } from "@/components/ui/checkbox"
  import { Label } from "@/components/ui/label"
@@ -9,7 +9,6 @@
  import { Textarea } from "@/components/ui/textarea"
  import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
  import { Separator } from "@/components/ui/separator"
- import { Input } from "@/components/ui/input"
  import { useToast } from "@/hooks/use-toast"
  import type { TransformState } from "@/types/filters"
  
@@ -21,8 +20,7 @@
  export default function TransformGenerator({ state, onStateChange }: TransformProps) {
    const { toast } = useToast()
    const cssRef = useRef<HTMLTextAreaElement>(null)
-   const htmlRef = useRef<HTMLTextAreaElement>(null)
-   const fileInputRef = useRef<HTMLInputElement>(null)
+ 
  
    const transformString = useMemo(() => {
      const parts: string[] = []
@@ -49,8 +47,6 @@
      ].filter(Boolean)
      return `.transform-demo{\n  ${rules.join("\n  ")}\n}`
    }, [transformString, state.originX, state.originY, state.preserve3d])
- 
-   const htmlCode = `<div class="transform-demo">Transform me</div>`
  
    const copy = async (text: string, label: string) => {
      try {
@@ -82,17 +78,6 @@
        preserve3d: false,
        previewBackground: "/placeholder.jpg?height=600&width=800",
      })
-   }
- 
-   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-     const file = event.target.files?.[0]
-     if (file) {
-       const reader = new FileReader()
-       reader.onload = (e) => {
-         onStateChange({ ...state, previewBackground: e.target?.result as string })
-       }
-       reader.readAsDataURL(file)
-     }
    }
  
    return (
@@ -206,17 +191,6 @@
  
                  <Separator />
  
-                 <div className="space-y-2">
-                   <Label>Preview Background</Label>
-                   <div className="flex items-center gap-2">
-                     <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2">
-                       <Upload className="w-4 h-4" />
-                       Upload Background
-                     </Button>
-                     <Input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                     <span className="text-sm text-muted-foreground">Choose background image</span>
-                   </div>
-                 </div>
                </div>
              </CardContent>
            </Card>
@@ -247,19 +221,6 @@
                </CardHeader>
                <CardContent>
                  <Textarea ref={cssRef} value={cssCode} readOnly rows={10} />
-               </CardContent>
-             </Card>
- 
-             <Card>
-               <CardHeader className="flex flex-row items-center justify-between">
-                 <CardTitle>HTML</CardTitle>
-                 <Button size="sm" onClick={() => copy(htmlCode, "HTML")}>
-                   <Copy className="w-4 h-4" />
-                   Copy
-                 </Button>
-               </CardHeader>
-               <CardContent>
-                 <Textarea ref={htmlRef} value={htmlCode} readOnly rows={10} />
                </CardContent>
              </Card>
            </div>
