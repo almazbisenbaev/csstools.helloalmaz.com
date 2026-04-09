@@ -107,7 +107,7 @@
            <Card className="h-fit">
              <CardHeader>
                <CardTitle className="flex items-center justify-between">
-                 Glassmorphism Controls
+                Matte Glass Controls
                  <Button variant="outline" size="sm" onClick={reset} className="bg-transparent">
                    <RotateCcw className="w-4 h-4" />
                    Reset
@@ -283,7 +283,7 @@
                  boxShadow,
                }}
              >
-               <div className="text-2xl font-semibold">Glassmorphism</div>
+              <div className="text-2xl font-semibold">Matte glass</div>
                <div className="text-sm text-muted-foreground mt-2">
                  Drag sliders to tweak the effect
                </div>

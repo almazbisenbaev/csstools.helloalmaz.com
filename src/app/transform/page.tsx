@@ -92,7 +92,7 @@
        <div className="container mx-auto py-8">
          <div className="text-center space-y-4 mb-8">
            <h1 className="text-4xl font-bold">CSS Playfround</h1>
-           <p className="text-muted-foreground text-lg">Generate CSS filters, backdrop filters, box shadows, glassmorphism, and transforms</p>
+          <p className="text-muted-foreground text-lg">Generate CSS filters, backdrop filters, box shadows, matte glass, and transforms</p>
          </div>
  
          <Tabs
@@ -110,7 +110,7 @@
              <TabsTrigger value="filters">CSS Filters</TabsTrigger>
              <TabsTrigger value="backdrop">Backdrop Filters</TabsTrigger>
              <TabsTrigger value="shadows">Box Shadows</TabsTrigger>
-             <TabsTrigger value="glass">Glassmorphism</TabsTrigger>
+            <TabsTrigger value="glass">Matte glass</TabsTrigger>
              <TabsTrigger value="transform">Transform</TabsTrigger>
            </TabsList>
  

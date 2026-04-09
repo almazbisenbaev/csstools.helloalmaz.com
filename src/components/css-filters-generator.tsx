@@ -136,17 +136,19 @@ export default function CSSFiltersGenerator({ state, onStateChange }: CSSFilters
                       </span>
                     </div>
 
-                    <Slider
-                      value={[filter.value]}
-                      onValueChange={(value) => updateFilter(index, { value: value[0] })}
-                      min={filter.min}
-                      max={filter.max}
-                      step={filter.property === "blur" ? 0.1 : 1}
-                      disabled={!filter.enabled}
-                      className="w-full"
-                    />
-
-                    <Separator />
+                    {filter.enabled && (
+                      <>
+                        <Slider
+                          value={[filter.value]}
+                          onValueChange={(value) => updateFilter(index, { value: value[0] })}
+                          min={filter.min}
+                          max={filter.max}
+                          step={filter.property === "blur" ? 0.1 : 1}
+                          className="w-full"
+                        />
+                        <Separator />
+                      </>
+                    )}
                   </div>
                 ))}
 

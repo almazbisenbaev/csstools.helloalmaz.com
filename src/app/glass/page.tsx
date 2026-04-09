@@ -113,7 +113,7 @@
              <TabsTrigger value="filters">CSS Filters</TabsTrigger>
              <TabsTrigger value="backdrop">Backdrop Filters</TabsTrigger>
              <TabsTrigger value="shadows">Box Shadows</TabsTrigger>
-             <TabsTrigger value="glass">Glassmorphism</TabsTrigger>
+             <TabsTrigger value="glass">Matte glass</TabsTrigger>
              <TabsTrigger value="transform">Transform</TabsTrigger>
            </TabsList>
  
