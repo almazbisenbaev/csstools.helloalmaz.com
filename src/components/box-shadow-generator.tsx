@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useRef } from "react"
-import { Copy, RotateCcw, Upload, Plus, Trash2 } from "lucide-react"
+import { Copy, RotateCcw, Upload, Plus, Trash2, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
@@ -14,6 +14,99 @@ import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import type { BoxShadowConfig, BoxShadowState } from "@/types/filters"
+
+const PRESETS: Record<string, BoxShadowConfig[]> = {
+  "Soft Modern": [
+    {
+      id: "soft-1",
+      enabled: true,
+      inset: false,
+      offsetX: 0,
+      offsetY: 4,
+      blurRadius: 10,
+      spreadRadius: 0,
+      color: "rgba(0,0,0,0.1)",
+    },
+    {
+      id: "soft-2",
+      enabled: true,
+      inset: false,
+      offsetX: 0,
+      offsetY: 2,
+      blurRadius: 4,
+      spreadRadius: -1,
+      color: "rgba(0,0,0,0.06)",
+    },
+  ],
+  "Deep Shadow": [
+    {
+      id: "deep-1",
+      enabled: true,
+      inset: false,
+      offsetX: 0,
+      offsetY: 20,
+      blurRadius: 25,
+      spreadRadius: -5,
+      color: "rgba(0,0,0,0.1)",
+    },
+    {
+      id: "deep-2",
+      enabled: true,
+      inset: false,
+      offsetX: 0,
+      offsetY: 10,
+      blurRadius: 10,
+      spreadRadius: -5,
+      color: "rgba(0,0,0,0.04)",
+    },
+  ],
+  "Shadow as Border": [
+    {
+      id: "border-1",
+      enabled: true,
+      inset: false,
+      offsetX: 0,
+      offsetY: 0,
+      blurRadius: 0,
+      spreadRadius: 1,
+      color: "rgba(0,0,0,0.1)",
+    },
+    {
+      id: "border-2",
+      enabled: true,
+      inset: false,
+      offsetX: 0,
+      offsetY: 4,
+      blurRadius: 6,
+      spreadRadius: -1,
+      color: "rgba(0,0,0,0.1)",
+    },
+  ],
+  "Inner Shadow": [
+    {
+      id: "inner-1",
+      enabled: true,
+      inset: true,
+      offsetX: 0,
+      offsetY: 2,
+      blurRadius: 4,
+      spreadRadius: 0,
+      color: "rgba(0,0,0,0.1)",
+    },
+  ],
+  "Floating Glow": [
+    {
+      id: "glow-1",
+      enabled: true,
+      inset: false,
+      offsetX: 0,
+      offsetY: 0,
+      blurRadius: 20,
+      spreadRadius: 5,
+      color: "rgba(59, 130, 246, 0.5)",
+    },
+  ],
+}
 
 interface BoxShadowGeneratorProps {
   state: BoxShadowState
@@ -45,6 +138,16 @@ export default function BoxShadowGenerator({ state, onStateChange }: BoxShadowGe
   const updateShadow = (id: string, updates: Partial<BoxShadowConfig>) => {
     const newShadows = state.shadows.map((shadow) => (shadow.id === id ? { ...shadow, ...updates } : shadow))
     onStateChange({ ...state, shadows: newShadows })
+  }
+
+  const applyPreset = (presetName: string) => {
+    const presetShadows = PRESETS[presetName]
+    if (presetShadows) {
+      onStateChange({
+        ...state,
+        shadows: presetShadows.map((s) => ({ ...s, id: Math.random().toString(36).substr(2, 9) })),
+      })
+    }
   }
 
   const resetShadows = () => {
@@ -130,6 +233,28 @@ export default function BoxShadowGenerator({ state, onStateChange }: BoxShadowGe
             </CardHeader>
             <CardContent>
               <div className="space-y-6 max-h-[600px] overflow-y-auto">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm font-medium">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                    Presets
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {Object.keys(PRESETS).map((presetName) => (
+                      <Button
+                        key={presetName}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => applyPreset(presetName)}
+                        className="text-xs h-7 bg-transparent"
+                      >
+                        {presetName}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
                 {state.shadows.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
                     <p>No shadows added yet.</p>
