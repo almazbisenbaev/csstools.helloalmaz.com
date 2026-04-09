@@ -1,17 +1,15 @@
 "use client"
 
 import React from "react"
-
-import { useState, useRef, useCallback } from "react"
+import { useState, useRef, useCallback, useEffect } from "react"
 import { Copy, RotateCcw, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import type { FilterConfig, BackdropFiltersState } from "@/types/filters"
 
@@ -23,6 +21,11 @@ interface BackdropFiltersGeneratorProps {
 export default function BackdropFiltersGenerator({ state, onStateChange }: BackdropFiltersGeneratorProps) {
   const { toast } = useToast()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const [dragPosition, setDragPosition] = useState({ x: 100, y: 100 })
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
 
   const updateFilter = (index: number, updates: Partial<FilterConfig>) => {
     const newFilters = state.filters.map((filter, i) => (i === index ? { ...filter, ...updates } : filter))
@@ -52,16 +55,13 @@ export default function BackdropFiltersGenerator({ state, onStateChange }: Backd
   const generateFilterString = () => {
     const activeFilters = state.filters.filter((filter) => filter.enabled)
     if (activeFilters.length === 0) return "none"
-
     return activeFilters.map((filter) => `${filter.property}(${filter.value}${filter.unit})`).join(" ")
   }
 
   const generateCSS = () => {
     const filterString = generateFilterString()
-    return `.backdrop-element {
-  backdrop-filter: ${filterString};
-  -webkit-backdrop-filter: ${filterString};
-}`
+    return `backdrop-filter: ${filterString};
+-webkit-backdrop-filter: ${filterString};`
   }
 
   const copyToClipboard = async () => {
@@ -80,49 +80,29 @@ export default function BackdropFiltersGenerator({ state, onStateChange }: Backd
     }
   }
 
-  const [dragPosition, setDragPosition] = useState({ x: 50, y: 50 })
-  const [isDragging, setIsDragging] = useState(false)
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-  const containerRef = useRef<HTMLDivElement>(null)
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    setIsDragging(true)
+    setDragStart({
+      x: e.clientX - dragPosition.x,
+      y: e.clientY - dragPosition.y,
+    })
+  }, [dragPosition])
 
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      setIsDragging(true)
-      setDragStart({
-        x: e.clientX - dragPosition.x,
-        y: e.clientY - dragPosition.y,
-      })
-    },
-    [dragPosition],
-  )
-
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (!isDragging || !containerRef.current) return
-
-      const container = containerRef.current
-      const containerRect = container.getBoundingClientRect()
-      const cardWidth = 300 // Approximate card width
-      const cardHeight = 200 // Approximate card height
-
-      let newX = e.clientX - dragStart.x
-      let newY = e.clientY - dragStart.y
-
-      // Keep within boundaries
-      newX = Math.max(0, Math.min(containerRect.width - cardWidth, newX))
-      newY = Math.max(0, Math.min(containerRect.height - cardHeight, newY))
-
-      setDragPosition({ x: newX, y: newY })
-    },
-    [isDragging, dragStart],
-  )
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging || !containerRef.current) return
+    const containerRect = containerRef.current.getBoundingClientRect()
+    let newX = e.clientX - dragStart.x
+    let newY = e.clientY - dragStart.y
+    newX = Math.max(0, Math.min(containerRect.width - 320, newX))
+    newY = Math.max(0, Math.min(containerRect.height - 220, newY))
+    setDragPosition({ x: newX, y: newY })
+  }, [isDragging, dragStart])
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false)
   }, [])
 
-  // Add event listeners
-  React.useEffect(() => {
+  useEffect(() => {
     if (isDragging) {
       document.addEventListener("mousemove", handleMouseMove)
       document.addEventListener("mouseup", handleMouseUp)
@@ -133,142 +113,125 @@ export default function BackdropFiltersGenerator({ state, onStateChange }: Backd
     }
   }, [isDragging, handleMouseMove, handleMouseUp])
 
+  const filterString = generateFilterString()
+
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <div className="grid lg:grid-cols-5 gap-6">
-        {/* Controls Section - Left Side */}
-        <div className="lg:col-span-2">
-          <Card className="h-fit">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                Backdrop Filter Controls
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={resetFilters}
-                  className="flex items-center gap-2 bg-transparent"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  Reset
-                </Button>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6 max-h-[600px] overflow-y-auto">
-                {state.filters.map((filter, index) => (
-                  <div key={filter.property} className="space-y-3">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`backdrop-filter-${index}`}
-                        checked={filter.enabled}
-                        onCheckedChange={(checked) => updateFilter(index, { enabled: !!checked })}
-                      />
-                      <Label htmlFor={`backdrop-filter-${index}`} className="text-sm font-medium cursor-pointer">
-                        {filter.name}
-                      </Label>
-                      <span className="text-xs text-muted-foreground ml-auto">
-                        {filter.value}
-                        {filter.unit}
-                      </span>
-                    </div>
+    <div className="grid lg:grid-cols-12 gap-12 items-start">
+      {/* Left Column: Preview */}
+      <div className="lg:col-span-7 space-y-8 sticky top-24">
+        <div 
+          ref={containerRef}
+          className="relative bg-white overflow-hidden aspect-[4/3] flex items-center justify-center cursor-crosshair select-none rounded-2xl shadow-xl"
+        >
+          <img
+            src={state.backgroundImage}
+            alt="Preview Background"
+            className="w-full h-full object-cover pointer-events-none"
+          />
+          
+          <div
+            className="absolute border border-white/40 shadow-2xl overflow-hidden cursor-move transition-shadow active:shadow-sm rounded-xl"
+            style={{
+              width: "300px",
+              height: "200px",
+              left: `${dragPosition.x}px`,
+              top: `${dragPosition.y}px`,
+              backdropFilter: filterString,
+              WebkitBackdropFilter: filterString,
+            }}
+            onMouseDown={handleMouseDown}
+          >
+            <div className="w-full h-full bg-white/10 flex items-center justify-center">
+              <span className="text-white text-[10px] font-black uppercase tracking-[0.2em] drop-shadow-md">
+                Drag Me
+              </span>
+            </div>
+          </div>
 
-                    <Slider
-                      value={[filter.value]}
-                      onValueChange={(value) => updateFilter(index, { value: value[0] })}
-                      min={filter.min}
-                      max={filter.max}
-                      step={filter.property === "blur" ? 0.1 : 1}
-                      disabled={!filter.enabled}
-                      className="w-full"
-                    />
+          <div className="absolute top-6 left-6">
+            <span className="bg-primary/90 backdrop-blur-md text-primary-foreground px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] rounded-full">
+              Live Preview
+            </span>
+          </div>
 
-                    {index < state.filters.length - 1 && <Separator />}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <Button
+            onClick={() => fileInputRef.current?.click()}
+            className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-md text-primary hover:bg-primary hover:text-white border border-primary/20 rounded-full shadow-lg"
+            size="sm"
+          >
+            <Upload className="w-4 h-4 mr-2" />
+            Upload Background
+          </Button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageUpload}
+            accept="image/*"
+            className="hidden"
+          />
         </div>
 
-        {/* Preview Section - Right Side */}
-        <div className="lg:col-span-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>Backdrop Filter Preview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {/* Image Upload */}
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center gap-2"
-                  >
-                    <Upload className="w-4 h-4" />
-                    Upload Background
-                  </Button>
-                  <Input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <Label className="text-lg">Generated CSS</Label>
+              <Button variant="outline" size="sm" onClick={copyToClipboard}>
+                <Copy className="w-4 h-4 mr-2" />
+                Copy CSS
+              </Button>
+            </div>
+            <Textarea
+              value={generateCSS()}
+              readOnly
+              className="bg-primary/5 border-primary/20 h-24"
+            />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Right Column: Controls */}
+      <div className="lg:col-span-5 space-y-8">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-black uppercase tracking-tighter">Adjustments</h2>
+          <Button variant="outline" size="sm" onClick={resetFilters}>
+            <RotateCcw className="w-4 h-4 mr-2" />
+            Reset All
+          </Button>
+        </div>
+
+        <div className="space-y-6">
+          {state.filters.map((filter, index) => (
+            <div key={filter.property} className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <Checkbox
+                    id={`backdrop-filter-${index}`}
+                    checked={filter.enabled}
+                    onCheckedChange={(checked) => updateFilter(index, { enabled: !!checked })}
                   />
-                  <span className="text-sm text-muted-foreground">Choose background image</span>
+                  <Label htmlFor={`backdrop-filter-${index}`} className="cursor-pointer">
+                    {filter.name}
+                  </Label>
                 </div>
-
-                {/* Preview with Backdrop Filter */}
-                <div
-                  ref={containerRef}
-                  className="relative overflow-hidden rounded-lg border min-h-96 flex items-center justify-center"
-                  style={{
-                    backgroundImage: `url(${state.backgroundImage})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                >
-                  <div
-                    className={`absolute bg-white/20 border border-white/30 rounded-lg p-6 text-center backdrop-blur-sm select-none ${
-                      isDragging ? "cursor-grabbing" : "cursor-grab"
-                    }`}
-                    style={{
-                      backdropFilter: generateFilterString(),
-                      WebkitBackdropFilter: generateFilterString(),
-                      left: `${dragPosition.x}px`,
-                      top: `${dragPosition.y}px`,
-                      width: "300px",
-                      height: "200px",
-                    }}
-                    onMouseDown={handleMouseDown}
-                  >
-                    <h3 className="text-xl font-bold text-white mb-2">Backdrop Filter Demo</h3>
-                    <p className="text-white/90 text-sm">This element has backdrop filters applied</p>
-                    <p className="text-white/70 text-xs mt-2">Drag me around!</p>
-                    <div className="mt-4 px-3 py-2 bg-white/10 rounded border border-white/20">
-                      <span className="text-white text-xs">Sample content behind the filter</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Generated CSS */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Generated CSS:</Label>
-                  <div className="relative">
-                    <Textarea value={generateCSS()} readOnly className="font-mono text-sm resize-none" rows={4} />
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={copyToClipboard}
-                      className="absolute top-2 right-2 h-8 w-8 p-0 bg-background"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
+                <span className="font-mono text-sm font-bold">
+                  {filter.value}{filter.unit}
+                </span>
               </div>
-            </CardContent>
-          </Card>
+
+              {filter.enabled && (
+                <div className="pl-10">
+                  <Slider
+                    value={[filter.value]}
+                    onValueChange={(value) => updateFilter(index, { value: value[0] })}
+                    min={filter.min}
+                    max={filter.max}
+                    step={filter.property === "blur" ? 0.1 : 1}
+                  />
+                </div>
+              )}
+              <Separator className="opacity-50" />
+            </div>
+          ))}
         </div>
       </div>
     </div>

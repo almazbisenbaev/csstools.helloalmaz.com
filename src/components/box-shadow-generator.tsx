@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useRef } from "react"
 import { Copy, RotateCcw, Upload, Plus, Trash2, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -9,102 +8,26 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import type { BoxShadowConfig, BoxShadowState } from "@/types/filters"
 
 const PRESETS: Record<string, BoxShadowConfig[]> = {
   "Soft Modern": [
-    {
-      id: "soft-1",
-      enabled: true,
-      inset: false,
-      offsetX: 0,
-      offsetY: 4,
-      blurRadius: 10,
-      spreadRadius: 0,
-      color: "rgba(0,0,0,0.1)",
-    },
-    {
-      id: "soft-2",
-      enabled: true,
-      inset: false,
-      offsetX: 0,
-      offsetY: 2,
-      blurRadius: 4,
-      spreadRadius: -1,
-      color: "rgba(0,0,0,0.06)",
-    },
+    { id: "soft-1", enabled: true, inset: false, offsetX: 0, offsetY: 4, blurRadius: 10, spreadRadius: 0, color: "rgba(0,0,0,0.1)" },
+    { id: "soft-2", enabled: true, inset: false, offsetX: 0, offsetY: 2, blurRadius: 4, spreadRadius: -1, color: "rgba(0,0,0,0.06)" },
   ],
   "Deep Shadow": [
-    {
-      id: "deep-1",
-      enabled: true,
-      inset: false,
-      offsetX: 0,
-      offsetY: 20,
-      blurRadius: 25,
-      spreadRadius: -5,
-      color: "rgba(0,0,0,0.1)",
-    },
-    {
-      id: "deep-2",
-      enabled: true,
-      inset: false,
-      offsetX: 0,
-      offsetY: 10,
-      blurRadius: 10,
-      spreadRadius: -5,
-      color: "rgba(0,0,0,0.04)",
-    },
+    { id: "deep-1", enabled: true, inset: false, offsetX: 0, offsetY: 20, blurRadius: 25, spreadRadius: -5, color: "rgba(0,0,0,0.1)" },
+    { id: "deep-2", enabled: true, inset: false, offsetX: 0, offsetY: 10, blurRadius: 10, spreadRadius: -5, color: "rgba(0,0,0,0.04)" },
   ],
-  "Shadow as Border": [
-    {
-      id: "border-1",
-      enabled: true,
-      inset: false,
-      offsetX: 0,
-      offsetY: 0,
-      blurRadius: 0,
-      spreadRadius: 1,
-      color: "rgba(0,0,0,0.1)",
-    },
-    {
-      id: "border-2",
-      enabled: true,
-      inset: false,
-      offsetX: 0,
-      offsetY: 4,
-      blurRadius: 6,
-      spreadRadius: -1,
-      color: "rgba(0,0,0,0.1)",
-    },
-  ],
-  "Inner Shadow": [
-    {
-      id: "inner-1",
-      enabled: true,
-      inset: true,
-      offsetX: 0,
-      offsetY: 2,
-      blurRadius: 4,
-      spreadRadius: 0,
-      color: "rgba(0,0,0,0.1)",
-    },
+  "Shadow Border": [
+    { id: "border-1", enabled: true, inset: false, offsetX: 0, offsetY: 0, blurRadius: 0, spreadRadius: 1, color: "rgba(0,0,0,0.1)" },
+    { id: "border-2", enabled: true, inset: false, offsetX: 0, offsetY: 4, blurRadius: 6, spreadRadius: -1, color: "rgba(0,0,0,0.1)" },
   ],
   "Floating Glow": [
-    {
-      id: "glow-1",
-      enabled: true,
-      inset: false,
-      offsetX: 0,
-      offsetY: 0,
-      blurRadius: 20,
-      spreadRadius: 5,
-      color: "rgba(59, 130, 246, 0.5)",
-    },
+    { id: "glow-1", enabled: true, inset: false, offsetX: 0, offsetY: 0, blurRadius: 20, spreadRadius: 5, color: "rgba(0, 0, 0, 0.2)" },
   ],
 }
 
@@ -168,7 +91,6 @@ export default function BoxShadowGenerator({ state, onStateChange }: BoxShadowGe
   const generateBoxShadowString = () => {
     const activeShadows = state.shadows.filter((shadow) => shadow.enabled)
     if (activeShadows.length === 0) return "none"
-
     return activeShadows
       .map((shadow) => {
         const insetStr = shadow.inset ? "inset " : ""
@@ -179,9 +101,7 @@ export default function BoxShadowGenerator({ state, onStateChange }: BoxShadowGe
 
   const generateCSS = () => {
     const boxShadowString = generateBoxShadowString()
-    return `.shadow-element {
-  box-shadow: ${boxShadowString};
-}`
+    return `box-shadow: ${boxShadowString};`
   }
 
   const copyToClipboard = async () => {
@@ -200,249 +120,212 @@ export default function BoxShadowGenerator({ state, onStateChange }: BoxShadowGe
     }
   }
 
+  const boxShadowString = generateBoxShadowString()
+
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <div className="grid lg:grid-cols-5 gap-6">
-        {/* Controls Section - Left Side */}
-        <div className="lg:col-span-2">
-          <Card className="h-fit">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                Box Shadow Controls
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={addShadow}
-                    className="flex items-center gap-2 bg-transparent"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Add
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={resetShadows}
-                    className="flex items-center gap-2 bg-transparent"
-                  >
-                    <RotateCcw className="w-4 h-4" />
-                    Reset
-                  </Button>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6 max-h-[600px] overflow-y-auto">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm font-medium">
-                    <Sparkles className="w-4 h-4 text-primary" />
-                    Presets
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {Object.keys(PRESETS).map((presetName) => (
-                      <Button
-                        key={presetName}
-                        variant="outline"
-                        size="sm"
-                        onClick={() => applyPreset(presetName)}
-                        className="text-xs h-7 bg-transparent"
-                      >
-                        {presetName}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
+    <div className="grid lg:grid-cols-12 gap-12 items-start">
+      {/* Left Column: Preview */}
+      <div className="lg:col-span-7 space-y-8 sticky top-24">
+        <div className="relative bg-[#f5f5f5] overflow-hidden aspect-[4/3] flex items-center justify-center rounded-2xl shadow-xl">
+          <img
+            src={state.previewImage}
+            alt="Preview"
+            className="w-1/2 h-1/2 object-cover border border-primary/10 transition-all rounded-xl shadow-2xl"
+            style={{ boxShadow: boxShadowString }}
+          />
+          
+          <div className="absolute top-6 left-6">
+            <span className="bg-primary/90 backdrop-blur-md text-primary-foreground px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] rounded-full">
+              Live Preview
+            </span>
+          </div>
 
-                <Separator />
-
-                {state.shadows.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <p>No shadows added yet.</p>
-                    <Button variant="outline" onClick={addShadow} className="mt-2 bg-transparent">
-                      Add your first shadow
-                    </Button>
-                  </div>
-                ) : (
-                  state.shadows.map((shadow, index) => (
-                    <div key={shadow.id} className="space-y-4 p-4 border rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id={`shadow-${shadow.id}`}
-                            checked={shadow.enabled}
-                            onCheckedChange={(checked) => updateShadow(shadow.id, { enabled: !!checked })}
-                          />
-                          <Label htmlFor={`shadow-${shadow.id}`} className="text-sm font-medium cursor-pointer">
-                            Shadow {index + 1}
-                          </Label>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeShadow(shadow.id)}
-                          className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-
-                      {shadow.enabled && (
-                        <div className="space-y-4">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`inset-${shadow.id}`}
-                              checked={shadow.inset}
-                              onCheckedChange={(checked) => updateShadow(shadow.id, { inset: !!checked })}
-                            />
-                            <Label htmlFor={`inset-${shadow.id}`} className="text-xs cursor-pointer">
-                              Inset
-                            </Label>
-                          </div>
-
-                          <div className="space-y-3">
-                            <div className="space-y-2">
-                              <Label className="text-xs">Offset X: {shadow.offsetX}px</Label>
-                              <Slider
-                                value={[shadow.offsetX]}
-                                onValueChange={(value) => updateShadow(shadow.id, { offsetX: value[0] })}
-                                min={-50}
-                                max={50}
-                                step={1}
-                                className="w-full"
-                              />
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label className="text-xs">Offset Y: {shadow.offsetY}px</Label>
-                              <Slider
-                                value={[shadow.offsetY]}
-                                onValueChange={(value) => updateShadow(shadow.id, { offsetY: value[0] })}
-                                min={-50}
-                                max={50}
-                                step={1}
-                                className="w-full"
-                              />
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label className="text-xs">Blur Radius: {shadow.blurRadius}px</Label>
-                              <Slider
-                                value={[shadow.blurRadius]}
-                                onValueChange={(value) => updateShadow(shadow.id, { blurRadius: value[0] })}
-                                min={0}
-                                max={100}
-                                step={1}
-                                className="w-full"
-                              />
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label className="text-xs">Spread Radius: {shadow.spreadRadius}px</Label>
-                              <Slider
-                                value={[shadow.spreadRadius]}
-                                onValueChange={(value) => updateShadow(shadow.id, { spreadRadius: value[0] })}
-                                min={-50}
-                                max={50}
-                                step={1}
-                                className="w-full"
-                              />
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label className="text-xs">Shadow Color</Label>
-                              <div className="flex items-center space-x-2">
-                                <Input
-                                  type="color"
-                                  value={shadow.color}
-                                  onChange={(e) => updateShadow(shadow.id, { color: e.target.value })}
-                                  className="w-12 h-8 p-1 border rounded"
-                                />
-                                <Input
-                                  type="text"
-                                  value={shadow.color}
-                                  onChange={(e) => updateShadow(shadow.id, { color: e.target.value })}
-                                  className="flex-1 text-xs font-mono"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {index < state.shadows.length - 1 && <Separator />}
-                    </div>
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
+          <Button
+            onClick={() => fileInputRef.current?.click()}
+            className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-md text-primary hover:bg-primary hover:text-white border border-primary/20 rounded-full shadow-lg"
+            size="sm"
+          >
+            <Upload className="w-4 h-4 mr-2" />
+            Upload Image
+          </Button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageUpload}
+            accept="image/*"
+            className="hidden"
+          />
         </div>
 
-        {/* Preview Section - Right Side */}
-        <div className="lg:col-span-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>Box Shadow Preview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {/* Image Upload */}
-                <div className="flex items-center gap-2">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <Label className="text-lg">Generated CSS</Label>
+              <Button variant="outline" size="sm" onClick={copyToClipboard}>
+                <Copy className="w-4 h-4 mr-2" />
+                Copy CSS
+              </Button>
+            </div>
+            <Textarea
+              value={generateCSS()}
+              readOnly
+              className="bg-primary/5 border-primary/20 h-24"
+            />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Right Column: Controls */}
+      <div className="lg:col-span-5 space-y-8">
+        <div className="space-y-4">
+          <h2 className="text-2xl font-black uppercase tracking-tighter">Presets</h2>
+          <div className="flex flex-wrap gap-2">
+            {Object.keys(PRESETS).map((presetName) => (
+              <Button
+                key={presetName}
+                variant="outline"
+                size="sm"
+                onClick={() => applyPreset(presetName)}
+                className="text-xs"
+              >
+                {presetName}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <Separator />
+
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-black uppercase tracking-tighter">Shadows</h2>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={addShadow}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Shadow
+            </Button>
+            <Button variant="outline" size="sm" onClick={resetShadows}>
+              <RotateCcw className="w-4 h-4 mr-2" />
+              Clear
+            </Button>
+          </div>
+        </div>
+
+        <div className="space-y-8">
+          {state.shadows.map((shadow, index) => (
+            <Card key={shadow.id} className="relative">
+              <CardContent className="pt-6 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <Checkbox
+                      id={`shadow-enabled-${shadow.id}`}
+                      checked={shadow.enabled}
+                      onCheckedChange={(checked) => updateShadow(shadow.id, { enabled: !!checked })}
+                    />
+                    <Label htmlFor={`shadow-enabled-${shadow.id}`}>
+                      Layer #{index + 1}
+                    </Label>
+                  </div>
                   <Button
-                    variant="outline"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center gap-2"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeShadow(shadow.id)}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
                   >
-                    <Upload className="w-4 h-4" />
-                    Upload Image
+                    <Trash2 className="w-4 h-4" />
                   </Button>
-                  <Input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                  <span className="text-sm text-muted-foreground">Choose your own image for preview</span>
                 </div>
 
-                {/* Preview with Box Shadow */}
-                <div className="bg-gray-100 p-8 rounded-lg border min-h-80 flex items-center justify-center">
-                  <div
-                    className="bg-white rounded-lg p-6 transition-all duration-200 max-w-sm"
-                    style={{ boxShadow: generateBoxShadowString() }}
-                  >
-                    <img
-                      src={state.previewImage || "/placeholder.jpg"}
-                      alt="Box shadow preview"
-                      className="w-full object-cover rounded"
-                      crossOrigin="anonymous"
-                    />
-                    <div className="mt-4 text-center">
-                      <h3 className="text-lg font-semibold">Box Shadow Demo</h3>
-                      <p className="text-sm text-muted-foreground">This element has box shadows applied</p>
+                {shadow.enabled && (
+                  <div className="space-y-6 pl-10 border-l border-primary/10">
+                    <div className="flex items-center gap-4">
+                      <Checkbox
+                        id={`shadow-inset-${shadow.id}`}
+                        checked={shadow.inset}
+                        onCheckedChange={(checked) => updateShadow(shadow.id, { inset: !!checked })}
+                      />
+                      <Label htmlFor={`shadow-inset-${shadow.id}`}>Inset</Label>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-8">
+                      <div className="space-y-4">
+                        <div className="flex justify-between">
+                          <Label className="text-[10px]">Offset X</Label>
+                          <span className="font-mono text-xs font-bold">{shadow.offsetX}px</span>
+                        </div>
+                        <Slider
+                          value={[shadow.offsetX]}
+                          onValueChange={(val) => updateShadow(shadow.id, { offsetX: val[0] })}
+                          min={-100}
+                          max={100}
+                        />
+                      </div>
+                      <div className="space-y-4">
+                        <div className="flex justify-between">
+                          <Label className="text-[10px]">Offset Y</Label>
+                          <span className="font-mono text-xs font-bold">{shadow.offsetY}px</span>
+                        </div>
+                        <Slider
+                          value={[shadow.offsetY]}
+                          onValueChange={(val) => updateShadow(shadow.id, { offsetY: val[0] })}
+                          min={-100}
+                          max={100}
+                        />
+                      </div>
+                      <div className="space-y-4">
+                        <div className="flex justify-between">
+                          <Label className="text-[10px]">Blur</Label>
+                          <span className="font-mono text-xs font-bold">{shadow.blurRadius}px</span>
+                        </div>
+                        <Slider
+                          value={[shadow.blurRadius]}
+                          onValueChange={(val) => updateShadow(shadow.id, { blurRadius: val[0] })}
+                          min={0}
+                          max={100}
+                        />
+                      </div>
+                      <div className="space-y-4">
+                        <div className="flex justify-between">
+                          <Label className="text-[10px]">Spread</Label>
+                          <span className="font-mono text-xs font-bold">{shadow.spreadRadius}px</span>
+                        </div>
+                        <Slider
+                          value={[shadow.spreadRadius]}
+                          onValueChange={(val) => updateShadow(shadow.id, { spreadRadius: val[0] })}
+                          min={-50}
+                          max={50}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <Label className="text-[10px]">Color</Label>
+                      <div className="flex gap-4 items-center">
+                        <input
+                          type="color"
+                          value={shadow.color.startsWith("rgba") ? "#000000" : shadow.color}
+                          onChange={(e) => updateShadow(shadow.id, { color: e.target.value })}
+                          className="w-12 h-12 border border-primary/10 cursor-pointer bg-transparent rounded-lg"
+                        />
+                        <span className="font-mono text-xs font-bold uppercase">{shadow.color}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
 
-                {/* Generated CSS */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Generated CSS:</Label>
-                  <div className="relative">
-                    <Textarea value={generateCSS()} readOnly className="font-mono text-sm resize-none" rows={4} />
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={copyToClipboard}
-                      className="absolute top-2 right-2 h-8 w-8 p-0 bg-background"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {state.shadows.length === 0 && (
+            <div className="text-center py-12 border-4 border-dashed border-primary/20">
+              <p className="text-muted-foreground font-bold uppercase tracking-widest">
+                No shadow layers yet.
+              </p>
+              <Button variant="outline" className="mt-4" onClick={addShadow}>
+                <Plus className="w-4 h-4 mr-2" />
+                Add First Layer
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

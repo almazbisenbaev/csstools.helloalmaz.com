@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useRef } from "react"
 import { Copy, RotateCcw, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -9,9 +8,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import type { FilterConfig, DropShadowConfig, FiltersState } from "@/types/filters"
 
@@ -65,7 +63,7 @@ export default function CSSFiltersGenerator({ state, onStateChange }: CSSFilters
     const filterStrings = activeFilters.map((filter) => `${filter.property}(${filter.value}${filter.unit})`)
 
     if (state.dropShadow.enabled) {
-      const shadowColor = state.dropShadow.color + "80" // Add some transparency
+      const shadowColor = state.dropShadow.color + "80"
       filterStrings.push(
         `drop-shadow(${state.dropShadow.offsetX}px ${state.dropShadow.offsetY}px ${state.dropShadow.blurRadius}px ${shadowColor})`,
       )
@@ -76,9 +74,7 @@ export default function CSSFiltersGenerator({ state, onStateChange }: CSSFilters
 
   const generateCSS = () => {
     const filterString = generateFilterString()
-    return `.filtered-element {
-  filter: ${filterString};
-}`
+    return `filter: ${filterString};`
   }
 
   const copyToClipboard = async () => {
@@ -97,194 +93,175 @@ export default function CSSFiltersGenerator({ state, onStateChange }: CSSFilters
     }
   }
 
+  const filterString = generateFilterString()
+
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <div className="grid lg:grid-cols-5 gap-6">
-        {/* Controls Section - Left Side */}
-        <div className="lg:col-span-2">
-          <Card className="h-fit">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                Filter Controls
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={resetFilters}
-                  className="flex items-center gap-2 bg-transparent"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  Reset
-                </Button>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6 max-h-[600px] overflow-y-auto">
-                {state.filters.map((filter, index) => (
-                  <div key={filter.property} className="space-y-3">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`filter-${index}`}
-                        checked={filter.enabled}
-                        onCheckedChange={(checked) => updateFilter(index, { enabled: !!checked })}
-                      />
-                      <Label htmlFor={`filter-${index}`} className="text-sm font-medium cursor-pointer">
-                        {filter.name}
-                      </Label>
-                      <span className="text-xs text-muted-foreground ml-auto">
-                        {filter.value}
-                        {filter.unit}
-                      </span>
-                    </div>
+    <div className="grid lg:grid-cols-12 gap-12 items-start">
+      {/* Left Column: Preview */}
+      <div className="lg:col-span-7 space-y-8 sticky top-24">
+        <div className="group relative bg-[#f5f5f5] overflow-hidden aspect-[4/3] flex items-center justify-center rounded-2xl shadow-xl">
+          <div className="w-1/2 h-1/2 relative">
+            <img
+              src={state.previewImage}
+              alt="Preview"
+              className="w-full h-full object-cover transition-all"
+              style={{ filter: filterString }}
+            />
+          </div>
+          <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-all pointer-events-none" />
+          
+          <div className="absolute top-6 left-6">
+            <span className="bg-primary/90 backdrop-blur-md text-primary-foreground px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] rounded-full">
+              Live Preview
+            </span>
+          </div>
 
-                    {filter.enabled && (
-                      <>
-                        <Slider
-                          value={[filter.value]}
-                          onValueChange={(value) => updateFilter(index, { value: value[0] })}
-                          min={filter.min}
-                          max={filter.max}
-                          step={filter.property === "blur" ? 0.1 : 1}
-                          className="w-full"
-                        />
-                        <Separator />
-                      </>
-                    )}
-                  </div>
-                ))}
-
-                {/* Drop Shadow Controls */}
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="drop-shadow"
-                      checked={state.dropShadow.enabled}
-                      onCheckedChange={(checked) => updateDropShadow({ enabled: !!checked })}
-                    />
-                    <Label htmlFor="drop-shadow" className="text-sm font-medium cursor-pointer">
-                      Drop Shadow
-                    </Label>
-                  </div>
-
-                  {state.dropShadow.enabled && (
-                    <div className="space-y-4 pl-6 border-l-2 border-muted">
-                      <div className="space-y-2">
-                        <Label className="text-xs">Offset X: {state.dropShadow.offsetX}px</Label>
-                        <Slider
-                          value={[state.dropShadow.offsetX]}
-                          onValueChange={(value) => updateDropShadow({ offsetX: value[0] })}
-                          min={-20}
-                          max={20}
-                          step={1}
-                          className="w-full"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label className="text-xs">Offset Y: {state.dropShadow.offsetY}px</Label>
-                        <Slider
-                          value={[state.dropShadow.offsetY]}
-                          onValueChange={(value) => updateDropShadow({ offsetY: value[0] })}
-                          min={-20}
-                          max={20}
-                          step={1}
-                          className="w-full"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label className="text-xs">Blur Radius: {state.dropShadow.blurRadius}px</Label>
-                        <Slider
-                          value={[state.dropShadow.blurRadius]}
-                          onValueChange={(value) => updateDropShadow({ blurRadius: value[0] })}
-                          min={0}
-                          max={30}
-                          step={1}
-                          className="w-full"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label className="text-xs">Shadow Color</Label>
-                        <div className="flex items-center space-x-2">
-                          <Input
-                            type="color"
-                            value={state.dropShadow.color}
-                            onChange={(e) => updateDropShadow({ color: e.target.value })}
-                            className="w-12 h-8 p-1 border rounded"
-                          />
-                          <Input
-                            type="text"
-                            value={state.dropShadow.color}
-                            onChange={(e) => updateDropShadow({ color: e.target.value })}
-                            className="flex-1 text-xs font-mono"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <Button
+            onClick={() => fileInputRef.current?.click()}
+            className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-md text-primary hover:bg-primary hover:text-white border border-primary/20 rounded-full shadow-lg"
+            size="sm"
+          >
+            <Upload className="w-4 h-4 mr-2" />
+            Upload Image
+          </Button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageUpload}
+            accept="image/*"
+            className="hidden"
+          />
         </div>
 
-        {/* Preview Section - Right Side */}
-        <div className="lg:col-span-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>Preview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {/* Image Upload */}
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center gap-2"
-                  >
-                    <Upload className="w-4 h-4" />
-                    Upload Image
-                  </Button>
-                  <Input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <Label className="text-lg">Generated CSS</Label>
+              <Button variant="outline" size="sm" onClick={copyToClipboard}>
+                <Copy className="w-4 h-4 mr-2" />
+                Copy CSS
+              </Button>
+            </div>
+            <Textarea
+              value={generateCSS()}
+              readOnly
+              className="bg-primary/5 border-primary/20 h-24"
+            />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Right Column: Controls */}
+      <div className="lg:col-span-5 space-y-8">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-black uppercase tracking-tighter">Adjustments</h2>
+          <Button variant="outline" size="sm" onClick={resetFilters}>
+            <RotateCcw className="w-4 h-4 mr-2" />
+            Reset All
+          </Button>
+        </div>
+
+        <div className="space-y-6">
+          {state.filters.map((filter, index) => (
+            <div key={filter.property} className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <Checkbox
+                    id={`filter-${index}`}
+                    checked={filter.enabled}
+                    onCheckedChange={(checked) => updateFilter(index, { enabled: !!checked })}
                   />
-                  <span className="text-sm text-muted-foreground">Choose your own image for preview</span>
+                  <Label htmlFor={`filter-${index}`} className="cursor-pointer">
+                    {filter.name}
+                  </Label>
+                </div>
+                <span className="font-mono text-sm font-bold">
+                  {filter.value}{filter.unit}
+                </span>
+              </div>
+
+              {filter.enabled && (
+                <div className="pl-10">
+                  <Slider
+                    value={[filter.value]}
+                    onValueChange={(value) => updateFilter(index, { value: value[0] })}
+                    min={filter.min}
+                    max={filter.max}
+                    step={filter.property === "blur" ? 0.1 : 1}
+                  />
+                </div>
+              )}
+              <Separator className="opacity-50" />
+            </div>
+          ))}
+
+          {/* Drop Shadow Section */}
+          <div className="space-y-6 pt-4">
+            <div className="flex items-center gap-4">
+              <Checkbox
+                id="drop-shadow"
+                checked={state.dropShadow.enabled}
+                onCheckedChange={(checked) => updateDropShadow({ enabled: !!checked })}
+              />
+              <Label htmlFor="drop-shadow" className="text-xl">Drop Shadow</Label>
+            </div>
+
+            {state.dropShadow.enabled && (
+              <div className="pl-10 space-y-8 border-l border-primary/10">
+                <div className="space-y-4">
+                  <div className="flex justify-between">
+                    <Label className="text-[10px]">Offset X</Label>
+                    <span className="font-mono text-xs font-bold">{state.dropShadow.offsetX}px</span>
+                  </div>
+                  <Slider
+                    value={[state.dropShadow.offsetX]}
+                    onValueChange={(value) => updateDropShadow({ offsetX: value[0] })}
+                    min={-50}
+                    max={50}
+                  />
                 </div>
 
-                {/* Preview Image */}
-                <div className="relative overflow-hidden rounded-lg border bg-checkered">
-                  <img
-                    src={state.previewImage || "/placeholder.jpg"}
-                    alt="Filter preview"
-                    className="w-full object-cover transition-all duration-200"
-                    style={{ filter: generateFilterString() }}
-                    crossOrigin="anonymous"
+                <div className="space-y-4">
+                  <div className="flex justify-between">
+                    <Label className="text-[10px]">Offset Y</Label>
+                    <span className="font-mono text-xs font-bold">{state.dropShadow.offsetY}px</span>
+                  </div>
+                  <Slider
+                    value={[state.dropShadow.offsetY]}
+                    onValueChange={(value) => updateDropShadow({ offsetY: value[0] })}
+                    min={-50}
+                    max={50}
                   />
                 </div>
 
-                {/* Generated CSS */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Generated CSS:</Label>
-                  <div className="relative">
-                    <Textarea value={generateCSS()} readOnly className="font-mono text-sm resize-none" rows={4} />
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={copyToClipboard}
-                      className="absolute top-2 right-2 h-8 w-8 p-0 bg-background"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </Button>
+                <div className="space-y-4">
+                  <div className="flex justify-between">
+                    <Label className="text-[10px]">Blur</Label>
+                    <span className="font-mono text-xs font-bold">{state.dropShadow.blurRadius}px</span>
+                  </div>
+                  <Slider
+                    value={[state.dropShadow.blurRadius]}
+                    onValueChange={(value) => updateDropShadow({ blurRadius: value[0] })}
+                    min={0}
+                    max={100}
+                  />
+                </div>
+
+                <div className="space-y-4">
+                  <Label className="text-[10px]">Color</Label>
+                  <div className="flex gap-4 items-center">
+                    <input
+                      type="color"
+                      value={state.dropShadow.color}
+                      onChange={(e) => updateDropShadow({ color: e.target.value })}
+                      className="w-12 h-12 border border-primary/10 cursor-pointer bg-transparent rounded-lg"
+                    />
+                    <span className="font-mono text-xs font-bold uppercase">{state.dropShadow.color}</span>
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            )}
+          </div>
         </div>
       </div>
     </div>
