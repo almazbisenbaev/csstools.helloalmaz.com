@@ -89,6 +89,11 @@ export interface LiquidGlassState {
   numOctaves: number
   seed: number
 
+  // SVG Filter - Component Transfer (Gamma)
+  gammaAmplitude: number
+  gammaExponent: number
+  gammaOffset: number
+
   // SVG Filter - Gaussian Blur
   blurStdDeviation: number
 
@@ -109,6 +114,7 @@ export interface LiquidGlassState {
   tintColor: string
   tintOpacity: number
   borderRadius: number
+  padding: number
 
   // Preview
   previewBackground: string

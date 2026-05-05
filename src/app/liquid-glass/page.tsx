@@ -10,6 +10,9 @@ export default function Page() {
     baseFrequencyY: 0.01,
     numOctaves: 1,
     seed: 5,
+    gammaAmplitude: 1,
+    gammaExponent: 10,
+    gammaOffset: 0.5,
     blurStdDeviation: 3,
     surfaceScale: 5,
     specularConstant: 1,
@@ -23,6 +26,7 @@ export default function Page() {
     tintColor: "#ffffff",
     tintOpacity: 25,
     borderRadius: 32,
+    padding: 40,
     previewBackground: "/placeholder.jpg?height=600&width=800",
   })
 
